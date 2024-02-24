@@ -6,26 +6,30 @@ import spock.lang.Subject
 class ServiceServiceTest extends TestBase {
 
 	@Subject
-	def service = new ServiceService(Mock(ServiceRepository))
+	def service = new ServiceService(
+			Mock(ServiceRepository),
+			Mock(ModelConverter))
 
 	def "getAll"() {
 		when:
 			def result = service.getAll()
 		then:
-			1 * service.serviceRepository.findAll() >> [tmpService]
+			1 * service.serviceRepository.findAll() >> [serviceDao]
+			1 * service.modelConverter.convert(serviceDao) >> serviceDto
 			0 * _
 		and:
-			assert result == [tmpService]
+			assert result == [serviceDto]
 	}
 
 	def "getOne"() {
 		when: "found"
 			def result = service.getOne(1)
 		then:
-			1 * service.serviceRepository.findById(1) >> Optional.of(tmpService)
+			1 * service.serviceRepository.findById(1) >> Optional.of(serviceDao)
+			1 * service.modelConverter.convert(serviceDao) >> serviceDto
 			0 * _
 		and:
-			assert result == tmpService
+			assert result == serviceDto
 
 		when: "not found"
 			result = service.getOne(999)
@@ -40,21 +44,22 @@ class ServiceServiceTest extends TestBase {
 		setup:
 			def newServiceId = 50
 		when: "not present - can create"
-			def result = service.create(tmpService)
+			def result = service.create(serviceDto)
 		then:
-			1 * service.serviceRepository.findByName(tmpService.getName()) >> Optional.empty()
-			1 * service.serviceRepository.save(tmpService) >> {
-				tmpService.setServiceId(newServiceId)
-				return tmpService
+			1 * service.serviceRepository.findByName(serviceDto.getName()) >> Optional.empty()
+			1 * service.modelConverter.convert(serviceDto) >> serviceDao
+			1 * service.serviceRepository.save(serviceDao) >> {
+				serviceDao.setServiceId(newServiceId)
+				return serviceDao
 			}
 			0 * _
 		and:
 			assert result == newServiceId
 
 		when: "present - can't create service with the same name"
-			service.create(tmpService)
+			service.create(serviceDto)
 		then:
-			1 * service.serviceRepository.findByName(tmpService.getName()) >> Optional.of(tmpService)
+			1 * service.serviceRepository.findByName(serviceDto.getName()) >> Optional.of(serviceDao)
 			0 * _
 		and:
 			def ex = thrown(RuntimeException)
@@ -63,28 +68,30 @@ class ServiceServiceTest extends TestBase {
 
 	def "update"() {
 		when:
-			def result = service.update(tmpService.getServiceId(), tmpService)
+			def result = service.update(serviceDto.getServiceId(), serviceDto)
 		then:
-			1 * service.serviceRepository.save(tmpService) >> tmpService
+			1 * service.modelConverter.convert(serviceDto) >> serviceDao
+			1 * service.serviceRepository.save(serviceDao) >> serviceDao
+			1 * service.modelConverter.convert(serviceDao) >> serviceDto
 			0 * _
 		and:
-			assert result == tmpService
+			assert result == serviceDto
 	}
 
 	def "delete"() {
 		when: "first run - was in the db before delete - could delete"
-			def result = service.delete(tmpService.getServiceId())
+			def result = service.delete(serviceDto.getServiceId())
 		then:
-			1 * service.serviceRepository.findById(tmpService.getServiceId()) >> Optional.of(tmpService)
-			1 * service.serviceRepository.delete(tmpService)
+			1 * service.serviceRepository.findById(serviceDto.getServiceId()) >> Optional.of(serviceDao)
+			1 * service.serviceRepository.delete(serviceDao)
 			0 * _
 		and:
 			assert result
 
 		when: "second run - was not in the db before delete - could not delete"
-			result = service.delete(tmpService.getServiceId())
+			result = service.delete(serviceDto.getServiceId())
 		then:
-			1 * service.serviceRepository.findById(tmpService.getServiceId()) >> Optional.empty()
+			1 * service.serviceRepository.findById(serviceDto.getServiceId()) >> Optional.empty()
 			0 * _
 		and:
 			assert !result

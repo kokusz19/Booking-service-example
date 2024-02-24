@@ -1,4 +1,4 @@
-package com.kokusz19.udinfopark.model;
+package com.kokusz19.udinfopark.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

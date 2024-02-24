@@ -1,7 +1,7 @@
 package com.kokusz19.udinfopark.service;
 
 import com.kokusz19.udinfopark.api.CompanyApi;
-import com.kokusz19.udinfopark.model.Company;
+import com.kokusz19.udinfopark.model.dto.Company;
 import com.kokusz19.udinfopark.repository.CompanyRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,34 +13,36 @@ import java.util.Optional;
 public class CompanyService implements CompanyApi {
 
     private final CompanyRepository companyRepository;
+    private final ModelConverter modelConverter;
 
-    public CompanyService(CompanyRepository companyRepository) {
+    public CompanyService(CompanyRepository companyRepository, ModelConverter modelConverter) {
         this.companyRepository = companyRepository;
+        this.modelConverter = modelConverter;
     }
 
     @Override
     public List<Company> getAll() {
-        return companyRepository.findAll();
+        return companyRepository.findAll().stream().map(modelConverter::convert).toList();
     }
 
     @Override
     public Company getOne(int id) {
-        return companyRepository.findById(id).orElse(null);
+        return companyRepository.findById(id).map(modelConverter::convert).orElse(null);
     }
 
     @Override
     public int create(Company subject) {
-        Optional<Company> byName = companyRepository.findByName(subject.getName());
+        Optional<com.kokusz19.udinfopark.model.dao.Company> byName = companyRepository.findByName(subject.getName());
         if(byName.isPresent()) {
             throw new RuntimeException("Company already exists!");
         }
-        return companyRepository.save(subject).getCompanyId();
+        return companyRepository.save(modelConverter.convert(subject)).getCompanyId();
     }
 
     @Override
     public Company update(int id, Company subject) {
         subject.setCompanyId(id);
-        return companyRepository.save(subject);
+        return modelConverter.convert(companyRepository.save(modelConverter.convert(subject)));
     }
 
     @Override

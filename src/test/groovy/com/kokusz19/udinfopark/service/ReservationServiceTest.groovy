@@ -1,6 +1,6 @@
 package com.kokusz19.udinfopark.service
 
-import com.kokusz19.udinfopark.model.ReservationSearchParams
+import com.kokusz19.udinfopark.model.dto.ReservationSearchParams
 import com.kokusz19.udinfopark.repository.ReservationRepository
 import spock.lang.Subject
 
@@ -9,26 +9,31 @@ import java.time.LocalDate
 class ReservationServiceTest extends TestBase {
 
 	@Subject
-	def service = new ReservationService(Mock(ReservationRepository))
+	def service = new ReservationService(
+			Mock(ReservationRepository),
+			Mock(ServiceService),
+			Mock(ModelConverter))
 
 	def "getAll"() {
 		when:
 			def result = service.getAll()
 		then:
-			1 * service.reservationRepository.findAll() >> [reservation]
+			1 * service.reservationRepository.findAll() >> [reservationDao]
+			1 * service.modelConverter.convert(reservationDao) >> reservationDto
 			0 * _
 		and:
-			assert result == [reservation]
+			assert result == [reservationDto]
 	}
 
 	def "getOne"() {
 		when: "found"
 			def result = service.getOne(1)
 		then:
-			1 * service.reservationRepository.findById(1) >> Optional.of(reservation)
+			1 * service.reservationRepository.findById(1) >> Optional.of(reservationDao)
+			1 * service.modelConverter.convert(reservationDao) >> reservationDto
 			0 * _
 		and:
-			assert result == reservation
+			assert result == reservationDto
 
 		when: "not found"
 			result = service.getOne(999)
@@ -43,21 +48,24 @@ class ReservationServiceTest extends TestBase {
 		setup:
 			def newReservationId = 50
 		when: "not present - can create"
-			def result = service.create(reservation)
+			def result = service.create(reservationDto)
 		then:
-			1 * service.reservationRepository.findByreservorNameAndServices(reservation.getReservorName(), reservation.getServices()) >> Optional.empty()
-			1 * service.reservationRepository.save(reservation) >> {
-				reservation.setReservationId(newReservationId)
-				return reservation
+			1 * service.serviceService.findByIds(reservationDto.getServiceIds()) >> [serviceDao]
+			1 * service.reservationRepository.findByreservorNameAndServices(reservationDto.getReservorName(), [serviceDao]) >> Optional.empty()
+			1 * service.modelConverter.convert(reservationDto) >> reservationDao
+			1 * service.reservationRepository.save(reservationDao) >> {
+				reservationDao.setReservationId(newReservationId)
+				return reservationDao
 			}
 			0 * _
 		and:
 			assert result == newReservationId
 
 		when: "present - can't create reservation with the same name"
-			service.create(reservation)
+			service.create(reservationDto)
 		then:
-			1 * service.reservationRepository.findByreservorNameAndServices(reservation.getReservorName(), reservation.getServices()) >> Optional.of(reservation)
+			1 * service.serviceService.findByIds(reservationDto.getServiceIds()) >> [serviceDao]
+			1 * service.reservationRepository.findByreservorNameAndServices(reservationDto.getReservorName(), [serviceDao]) >> Optional.of(reservationDao)
 			0 * _
 		and:
 			def ex = thrown(RuntimeException)
@@ -66,28 +74,30 @@ class ReservationServiceTest extends TestBase {
 
 	def "update"() {
 		when:
-			def result = service.update(reservation.getReservationId(), reservation)
+			def result = service.update(reservationDto.getReservationId(), reservationDto)
 		then:
-			1 * service.reservationRepository.save(reservation) >> reservation
+			1 * service.modelConverter.convert(reservationDto) >> reservationDao
+			1 * service.reservationRepository.save(reservationDao) >> reservationDao
+			1 * service.modelConverter.convert(reservationDao) >> reservationDto
 			0 * _
 		and:
-			assert result == reservation
+			assert result == reservationDto
 	}
 
 	def "delete"() {
 		when: "first run - was in the db before delete - could delete"
-			def result = service.delete(reservation.getReservationId())
+			def result = service.delete(reservationDto.getReservationId())
 		then:
-			1 * service.reservationRepository.findById(reservation.getReservationId()) >> Optional.of(reservation)
-			1 * service.reservationRepository.delete(reservation)
+			1 * service.reservationRepository.findById(reservationDto.getReservationId()) >> Optional.of(reservationDao)
+			1 * service.reservationRepository.delete(reservationDao)
 			0 * _
 		and:
 			assert result
 
 		when: "second run - was not in the db before delete - could not delete"
-			result = service.delete(reservation.getReservationId())
+			result = service.delete(reservationDto.getReservationId())
 		then:
-			1 * service.reservationRepository.findById(reservation.getReservationId()) >> Optional.empty()
+			1 * service.reservationRepository.findById(reservationDto.getReservationId()) >> Optional.empty()
 			0 * _
 		and:
 			assert !result
@@ -118,18 +128,20 @@ class ReservationServiceTest extends TestBase {
 		when: "no searchParams 1"
 			result = service.search(noSearchParams1)
 		then:
-			1 * service.reservationRepository.findAll() >> [reservation]
+			1 * service.reservationRepository.findAll() >> [reservationDao]
+			1 * service.modelConverter.convert(reservationDao) >> reservationDto
 			0 * _
 		and:
-			assert result == [reservation]
+			assert result == [reservationDto]
 
 		when: "no searchParams 2"
-			result = service.search(noSearchParams1)
+			result = service.search(noSearchParams2)
 		then:
-			1 * service.reservationRepository.findAll() >> [reservation]
+			1 * service.reservationRepository.findAll() >> [reservationDao]
+			1 * service.modelConverter.convert(reservationDao) >> reservationDto
 			0 * _
 		and:
-			assert result == [reservation]
+			assert result == [reservationDto]
 
 		when: "invalid params"
 			service.search(invalidSearchParams)
