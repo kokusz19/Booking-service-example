@@ -1,4 +1,6 @@
 server:
+  servlet:
+    context-path: /v1
   port: 8080
 spring:
   autoconfigure:
