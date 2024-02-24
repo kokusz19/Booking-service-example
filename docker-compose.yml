@@ -18,8 +18,6 @@ services:
     container_name: ud-infopark-database
     ports:
       - "3306:3306"
-    volumes:
-      - db:/var/lib/postgresql/data
     environment:
       - MYSQL_DATABASE=database
       - MYSQL_USER=${DB_USERNAME}
@@ -30,6 +28,3 @@ services:
 networks:
   local-network:
     driver: bridge
-volumes:
-  db:
-    driver: local
