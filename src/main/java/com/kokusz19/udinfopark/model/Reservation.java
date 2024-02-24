@@ -15,8 +15,9 @@ public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int reservationId;
-    @Column(name = "company_id")
-    private int companyId;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "company_id", nullable = false)
+    private Company company;
     @OneToMany
     @JoinTable(
             name = "reservation_services",

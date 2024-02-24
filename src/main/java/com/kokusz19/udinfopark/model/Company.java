@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalTime;
-
 @Entity
 @Data
 @NoArgsConstructor
@@ -15,12 +13,20 @@ public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int companyId;
-    @Column(name = "name")
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
-    @Column(name = "address")
+    @Column(name = "address", nullable = false)
     private String address;
-    @Column(name = "open_at")
-    private LocalTime openAt;
-    @Column(name = "close_at")
-    private LocalTime closeAt;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "hour", column = @Column(name = "open_at_hour")),
+            @AttributeOverride(name = "minute", column = @Column(name = "open_at_minute"))
+    })
+    private Time openAt;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "hour", column = @Column(name = "close_at_hour")),
+            @AttributeOverride(name = "minute", column = @Column(name = "close_at_minute"))
+    })
+    private Time closeAt;
 }

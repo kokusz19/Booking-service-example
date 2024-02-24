@@ -13,10 +13,13 @@ public class Service {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int serviceId;
-    @Column(name = "name")
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "company_id", nullable = false)
+    private Company company;
     @Column(name = "description")
     private String description;
-    @Column(name = "duration_minutes")
+    @Column(name = "duration_minutes", nullable = false)
     private int durationMinutes;
 }
