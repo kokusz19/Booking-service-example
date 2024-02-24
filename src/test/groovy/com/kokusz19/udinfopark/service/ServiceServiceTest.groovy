@@ -1,6 +1,6 @@
 package com.kokusz19.udinfopark.service
 
-
+import com.kokusz19.udinfopark.repository.ServiceRepository
 import spock.lang.Subject
 
 class ServiceServiceTest extends TestBase {

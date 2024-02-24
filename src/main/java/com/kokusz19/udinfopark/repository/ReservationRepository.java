@@ -1,4 +1,4 @@
-package com.kokusz19.udinfopark.service;
+package com.kokusz19.udinfopark.repository;
 
 import com.kokusz19.udinfopark.model.Reservation;
 import com.kokusz19.udinfopark.model.Service;

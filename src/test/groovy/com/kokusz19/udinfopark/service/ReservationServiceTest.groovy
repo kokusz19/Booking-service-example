@@ -1,6 +1,7 @@
 package com.kokusz19.udinfopark.service
 
 import com.kokusz19.udinfopark.model.ReservationSearchParams
+import com.kokusz19.udinfopark.repository.ReservationRepository
 import spock.lang.Subject
 
 import java.time.LocalDate

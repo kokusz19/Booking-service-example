@@ -2,6 +2,7 @@ package com.kokusz19.udinfopark.service;
 
 import com.kokusz19.udinfopark.api.CompanyApi;
 import com.kokusz19.udinfopark.model.Company;
+import com.kokusz19.udinfopark.repository.CompanyRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

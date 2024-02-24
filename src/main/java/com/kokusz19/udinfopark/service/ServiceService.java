@@ -1,6 +1,7 @@
 package com.kokusz19.udinfopark.service;
 
 import com.kokusz19.udinfopark.api.ServiceApi;
+import com.kokusz19.udinfopark.repository.ServiceRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

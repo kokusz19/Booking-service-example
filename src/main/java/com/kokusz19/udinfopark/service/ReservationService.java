@@ -3,6 +3,7 @@ package com.kokusz19.udinfopark.service;
 import com.kokusz19.udinfopark.api.ReservationApi;
 import com.kokusz19.udinfopark.model.Reservation;
 import com.kokusz19.udinfopark.model.ReservationSearchParams;
+import com.kokusz19.udinfopark.repository.ReservationRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
