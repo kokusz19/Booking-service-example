@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  ud-infopark-application-j17:
+    build:
+      dockerfile: Dockerfile
+    container_name: ud-infopark-application-j17
+    depends_on:
+      - ud-infopark-database
+    ports:
+      - "8080:8080"
+    environment:
+      - spring.datasource.url=${DB_URL_DOCKER}
+      - jakarta.persistence.jdbc.url=${DB_URL_DOCKER}
+    networks:
+      - local-network
+  ud-infopark-database:
+    image: mysql:latest
+    container_name: ud-infopark-database
+    ports:
+      - "3306:3306"
+    volumes:
+      - db:/var/lib/postgresql/data
+    environment:
+      - MYSQL_DATABASE=database
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+    networks:
+      - local-network
+networks:
+  local-network:
+    driver: bridge
+volumes:
+  db:
+    driver: local
