@@ -7,5 +7,6 @@ clean:
 	gradlew clean
 build:
 	gradlew build
+	docker-compose build
 up:
 	docker-compose up

@@ -39,7 +39,7 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
-	testImplementation 'org.codehaus.groovy:groovy-all:3.0.9'
+	testImplementation 'org.codehaus.groovy:groovy-all:3.0.20'
 	testImplementation 'org.spockframework:spock-core:2.0-M5-groovy-3.0'
 	testImplementation 'org.spockframework:spock-spring:2.0-M5-groovy-3.0'
 	testImplementation 'net.bytebuddy:byte-buddy:1.12.18'
