@@ -13,12 +13,10 @@ import java.util.Optional;
 public class ReservationService implements ReservationApi {
 
     private final ReservationRepository reservationRepository;
-    private final ServiceService serviceService;
     private final ModelConverter modelConverter;
 
-    public ReservationService(ReservationRepository reservationRepository, ServiceService serviceService, ModelConverter modelConverter) {
+    public ReservationService(ReservationRepository reservationRepository, ModelConverter modelConverter) {
         this.reservationRepository = reservationRepository;
-        this.serviceService = serviceService;
         this.modelConverter = modelConverter;
     }
 
@@ -35,9 +33,8 @@ public class ReservationService implements ReservationApi {
     @Override
     public int create(Reservation subject) {
         // TODO: Fix after added reservation times
-        List<com.kokusz19.udinfopark.model.dao.Service> byIds = serviceService.findByIds(subject.getServiceIds());
-        Optional<com.kokusz19.udinfopark.model.dao.Reservation> byName = reservationRepository.findByreservorNameAndServices(subject.getReservorName(), byIds);
-        if(byName.isPresent()) {
+        Optional<com.kokusz19.udinfopark.model.dao.Reservation> reservation = reservationRepository.findById(subject.getReservationId());
+        if(reservation.isPresent()) {
             throw new RuntimeException("Reservation already exists!");
         }
         return reservationRepository.save(modelConverter.convert(subject)).getReservationId();

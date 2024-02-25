@@ -11,7 +11,6 @@ class ReservationServiceTest extends TestBase {
 	@Subject
 	def service = new ReservationService(
 			Mock(ReservationRepository),
-			Mock(ServiceService),
 			Mock(ModelConverter))
 
 	def "getAll"() {
@@ -50,8 +49,7 @@ class ReservationServiceTest extends TestBase {
 		when: "not present - can create"
 			def result = service.create(reservationDto)
 		then:
-			1 * service.serviceService.findByIds(reservationDto.getServiceIds()) >> [serviceDao]
-			1 * service.reservationRepository.findByreservorNameAndServices(reservationDto.getReservorName(), [serviceDao]) >> Optional.empty()
+			1 * service.reservationRepository.findById(reservationDto.getReservationId()) >> Optional.empty()
 			1 * service.modelConverter.convert(reservationDto) >> reservationDao
 			1 * service.reservationRepository.save(reservationDao) >> {
 				reservationDao.setReservationId(newReservationId)
@@ -64,8 +62,7 @@ class ReservationServiceTest extends TestBase {
 		when: "present - can't create reservation with the same name"
 			service.create(reservationDto)
 		then:
-			1 * service.serviceService.findByIds(reservationDto.getServiceIds()) >> [serviceDao]
-			1 * service.reservationRepository.findByreservorNameAndServices(reservationDto.getReservorName(), [serviceDao]) >> Optional.of(reservationDao)
+			1 * service.reservationRepository.findById(reservationDto.getReservationId()) >> Optional.of(reservationDao)
 			0 * _
 		and:
 			def ex = thrown(RuntimeException)

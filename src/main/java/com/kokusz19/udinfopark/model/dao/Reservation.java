@@ -24,7 +24,7 @@ public class Reservation {
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
     @NotEmpty @Valid
-    @OneToMany
+    @ManyToMany
     @JoinTable(
             name = "reservation_services",
             joinColumns = @JoinColumn(name = "reservation_id"),

@@ -4,6 +4,7 @@ import com.kokusz19.udinfopark.model.dao.Service;
 import com.kokusz19.udinfopark.model.dto.Company;
 import com.kokusz19.udinfopark.model.dto.Reservation;
 import com.kokusz19.udinfopark.model.dto.Time;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public class ModelConverter {
     private final ServiceService serviceService;
     private final CompanyService companyService;
 
-    public ModelConverter(ServiceService serviceService, CompanyService companyService) {
+    public ModelConverter(@Lazy ServiceService serviceService, @Lazy CompanyService companyService) {
         this.serviceService = serviceService;
         this.companyService = companyService;
     }

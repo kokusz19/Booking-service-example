@@ -1,5 +1,6 @@
 package com.kokusz19.udinfopark.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Company {
 
-    @NotNull
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private int companyId;
     @NotNull
     private String name;
