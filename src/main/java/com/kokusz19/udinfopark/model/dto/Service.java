@@ -3,6 +3,7 @@ package com.kokusz19.udinfopark.model.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,12 +15,12 @@ public class Service {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private int serviceId;
-    @NotNull
+    @NotNull @Size(min = 2)
     private String name;
-    @NotNull
+    @Min(1)
     private int companyId;
     private String description;
-    @NotNull @Min(0)
+    @Min(0)
     private int durationMinutes;
 
 }

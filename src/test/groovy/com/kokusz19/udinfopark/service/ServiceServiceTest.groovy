@@ -62,7 +62,7 @@ class ServiceServiceTest extends TestBase {
 			1 * service.serviceRepository.findByName(serviceDto.getName()) >> Optional.of(serviceDao)
 			0 * _
 		and:
-			def ex = thrown(RuntimeException)
+			def ex = thrown(IllegalArgumentException)
 			assert ex.message == "Service already exists!"
 	}
 

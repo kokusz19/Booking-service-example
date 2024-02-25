@@ -65,7 +65,7 @@ class ReservationServiceTest extends TestBase {
 			1 * service.reservationRepository.findById(reservationDto.getReservationId()) >> Optional.of(reservationDao)
 			0 * _
 		and:
-			def ex = thrown(RuntimeException)
+			def ex = thrown(IllegalArgumentException)
 			assert ex.message == "Reservation already exists!"
 	}
 
@@ -139,13 +139,5 @@ class ReservationServiceTest extends TestBase {
 			0 * _
 		and:
 			assert result == [reservationDto]
-
-		when: "invalid params"
-			service.search(invalidSearchParams)
-		then:
-			0 * _
-		and:
-			def ex = thrown(RuntimeException)
-			assert ex.message == "You can only pass in either the OnDate or the FromDate and ToDate!"
 	}
 }

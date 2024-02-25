@@ -1,5 +1,6 @@
 package com.kokusz19.udinfopark.service;
 
+import com.google.common.base.Preconditions;
 import com.kokusz19.udinfopark.api.CompanyApi;
 import com.kokusz19.udinfopark.model.dto.Company;
 import com.kokusz19.udinfopark.repository.CompanyRepository;
@@ -33,9 +34,7 @@ public class CompanyService implements CompanyApi {
     @Override
     public int create(Company subject) {
         Optional<com.kokusz19.udinfopark.model.dao.Company> byName = companyRepository.findByName(subject.getName());
-        if(byName.isPresent()) {
-            throw new RuntimeException("Company already exists!");
-        }
+        Preconditions.checkArgument(byName.isEmpty(), "Company already exists!");
         return companyRepository.save(modelConverter.convert(subject)).getCompanyId();
     }
 

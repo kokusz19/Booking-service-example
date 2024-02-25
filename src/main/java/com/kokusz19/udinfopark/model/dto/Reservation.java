@@ -1,8 +1,7 @@
 package com.kokusz19.udinfopark.model.dto;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,18 +13,18 @@ import java.util.List;
 @AllArgsConstructor
 public class Reservation {
 
-    @NotNull
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private int reservationId;
     @Min(1)
     private int companyId;
-    @NotEmpty
+    @NotEmpty @Size(min = 1)
     private List<Integer> serviceIds;
 
-    @NotEmpty
+    @NotEmpty @Size(min = 3)
     private String reservorName;
-    @NotEmpty
+    @Pattern(regexp = "^[\\+]?[0-9]{0,3}?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$")
     private String reservorPhoneNumber;
-    @NotEmpty
+    @NotEmpty @Email(regexp = "^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")
     private String reservorEmail;
 
 }

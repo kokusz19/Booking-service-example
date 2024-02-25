@@ -38,11 +38,30 @@ class ModelConverterTest extends TestBase {
 		when: "dto -> dao"
 			result = modelConverter.convert(reservationDto)
 		then:
-			1 * modelConverter.companyService.getOne(reservationDto.companyId) >> companyDto
 			1 * modelConverter.serviceService.findByIds(reservationDto.serviceIds) >> [serviceDao]
+			1 * modelConverter.companyService.getOne(reservationDto.companyId) >> companyDto
 			0 * _
 		and:
 			assert result == reservationDao
+
+		when: "dto -> dao - missing serviceIds"
+			modelConverter.convert(reservationDto)
+		then:
+			1 * modelConverter.serviceService.findByIds(reservationDto.serviceIds) >> []
+			0 * _
+		and:
+			def ex = thrown(IllegalArgumentException)
+			assert ex.message == "There are missing service ids in the request [ids=1]"
+
+		when: "dto -> dao - missing company"
+			modelConverter.convert(reservationDto)
+		then:
+			1 * modelConverter.serviceService.findByIds(reservationDto.serviceIds) >> [serviceDao]
+			1 * modelConverter.companyService.getOne(reservationDto.companyId) >> null
+			0 * _
+		and:
+			ex = thrown(IllegalArgumentException)
+			assert ex.message == "Company could not be found with [id=1]"
 	}
 
 	def "service converter"() {
@@ -60,6 +79,15 @@ class ModelConverterTest extends TestBase {
 			0 * _
 		and:
 			assert result == serviceDao
+
+		when: "dto -> dao - missing company"
+			modelConverter.convert(serviceDto)
+		then:
+			1 * modelConverter.companyService.getOne(serviceDto.companyId) >> null
+			0 * _
+		and:
+			def ex = thrown(IllegalArgumentException)
+			assert ex.message == "Company not found with [id=1]"
 	}
 
 	def "time converter"() {

@@ -3,6 +3,7 @@ package com.kokusz19.udinfopark.model.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,14 +15,13 @@ public class Company {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private int companyId;
-    @NotNull
+    @NotNull @Size(min = 2)
     private String name;
-    @NotNull
+    @NotNull @Size(min = 4)
     private String address;
 
-    // TODO: TEST
     @NotNull @Valid
     private Time openAt;
-    @NotNull
+    @NotNull @Valid
     private Time closeAt;
 }

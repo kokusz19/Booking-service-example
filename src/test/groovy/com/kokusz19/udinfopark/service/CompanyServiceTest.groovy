@@ -62,7 +62,7 @@ class CompanyServiceTest extends TestBase {
 			1 * service.companyRepository.findByName(companyDto.getName()) >> Optional.of(companyDto)
 			0 * _
 		and:
-			def ex = thrown(RuntimeException)
+			def ex = thrown(IllegalArgumentException)
 			assert ex.message == "Company already exists!"
 	}
 

@@ -1,5 +1,6 @@
 package com.kokusz19.udinfopark.service;
 
+import com.google.common.base.Preconditions;
 import com.kokusz19.udinfopark.api.ServiceApi;
 import com.kokusz19.udinfopark.repository.ServiceRepository;
 import org.springframework.stereotype.Service;
@@ -36,9 +37,7 @@ public class ServiceService implements ServiceApi {
     @Override
     public int create(com.kokusz19.udinfopark.model.dto.Service subject) {
         Optional<com.kokusz19.udinfopark.model.dao.Service> byName = serviceRepository.findByName(subject.getName());
-        if(byName.isPresent()) {
-            throw new RuntimeException("Service already exists!");
-        }
+        Preconditions.checkArgument(byName.isEmpty(), "Service already exists!");
         return serviceRepository.save(modelConverter.convert(subject)).getServiceId();
     }
 

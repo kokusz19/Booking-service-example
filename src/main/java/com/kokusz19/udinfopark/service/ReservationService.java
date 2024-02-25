@@ -1,5 +1,6 @@
 package com.kokusz19.udinfopark.service;
 
+import com.google.common.base.Preconditions;
 import com.kokusz19.udinfopark.api.ReservationApi;
 import com.kokusz19.udinfopark.model.dto.Reservation;
 import com.kokusz19.udinfopark.model.dto.ReservationSearchParams;
@@ -34,9 +35,7 @@ public class ReservationService implements ReservationApi {
     public int create(Reservation subject) {
         // TODO: Fix after added reservation times
         Optional<com.kokusz19.udinfopark.model.dao.Reservation> reservation = reservationRepository.findById(subject.getReservationId());
-        if(reservation.isPresent()) {
-            throw new RuntimeException("Reservation already exists!");
-        }
+        Preconditions.checkArgument(reservation.isEmpty(), "Reservation already exists!");
         return reservationRepository.save(modelConverter.convert(subject)).getReservationId();
     }
 
@@ -60,10 +59,6 @@ public class ReservationService implements ReservationApi {
     public List<Reservation> search(ReservationSearchParams searchParams) {
         if(searchParams == null || (searchParams.getOnDate() == null && searchParams.getFromDate() == null && searchParams.getToDate() == null)) {
             return getAll();
-        }
-
-        if(searchParams.getOnDate() != null && searchParams.getFromDate() != null && searchParams.getToDate() != null) {
-            throw new RuntimeException("You can only pass in either the OnDate or the FromDate and ToDate!");
         }
 
         // TODO

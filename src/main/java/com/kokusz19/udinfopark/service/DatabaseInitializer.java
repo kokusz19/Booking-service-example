@@ -85,7 +85,7 @@ public class DatabaseInitializer implements CommandLineRunner {
                 hospitalId,
                 List.of(hospitalEmergencyServices),
                 "Sir Edmund Blackadder",
-                "1-800-273-8255",
+                "+1-800-273-8255",
                 "blackadder@gmail.com"
         ));
 
