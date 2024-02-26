@@ -52,6 +52,7 @@ class ReservationServiceTest extends TestBase {
 		when: "can create"
 			def result = service.create(reservationDto)
 		then:
+			1 * service.serviceService.getByCompanyId(1) >> [serviceDto]
 			1 * service.serviceService.getOne(1) >> serviceDto
 			1 * service.serviceReservationService.findByServiceIdAndDate(serviceReservationDto, serviceDto) >> Optional.empty()
 			1 * service.modelConverter.convert(reservationDto.serviceReservations[0]) >> serviceReservationDao
@@ -72,6 +73,7 @@ class ReservationServiceTest extends TestBase {
 		when: "not present - can create"
 			service.create(reservationDto)
 		then:
+			1 * service.serviceService.getByCompanyId(1) >> [serviceDto]
 			1 * service.serviceService.getOne(1) >> serviceDto
 			1 * service.serviceReservationService.findByServiceIdAndDate(serviceReservationDto, serviceDto) >> Optional.of(serviceReservationDto)
 			0 * _

@@ -1,6 +1,6 @@
 package com.kokusz19.udinfopark.service
 
-
+import com.kokusz19.udinfopark.model.dao.Service
 import spock.lang.Subject
 
 class ModelConverterTest extends TestBase {
@@ -49,11 +49,11 @@ class ModelConverterTest extends TestBase {
 		when: "dto -> dao - missing serviceIds"
 			modelConverter.convert(reservationDto)
 		then:
-			1 * modelConverter.serviceService.findByIds([1]) >> []
+			1 * modelConverter.serviceService.findByIds([1]) >> [serviceDao, new Service(serviceId: 999)]
 			0 * _
 		and:
 			def ex = thrown(IllegalArgumentException)
-			assert ex.message == "There are missing service ids in the request [ids=1]"
+			assert ex.message == "There are missing service ids in the request"
 
 		when: "dto -> dao - missing company"
 			modelConverter.convert(reservationDto)

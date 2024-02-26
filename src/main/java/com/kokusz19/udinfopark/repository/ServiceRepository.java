@@ -16,4 +16,8 @@ public interface ServiceRepository extends JpaRepository<Service, Integer> {
     @Query("SELECT service FROM Service service WHERE service.serviceId in :ids")
     List<Service> findByIds(
             @Param("ids") List<Integer> ids);
+
+    @Query("SELECT service FROM Service service WHERE service.company.companyId = :companyId")
+    List<Service> findByCompanyId(
+            @Param("companyId") int companyId);
 }

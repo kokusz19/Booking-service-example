@@ -41,6 +41,13 @@ public class DatabaseInitializer implements CommandLineRunner {
                 new Time(8, 0),
                 new Time(20, 0)
         ));
+        int mcDonaldsId = companyApi.create(new Company(
+                0,
+                "McDonald's",
+                "4036 Debrecen",
+                new Time(0, 0),
+                new Time(23, 59)
+        ));
 
         int hospitalEmergencyServices = serviceApi.create(new Service(
                 0,
@@ -54,7 +61,7 @@ public class DatabaseInitializer implements CommandLineRunner {
                 "Basic services",
                 hospitalId,
                 "Basic services",
-                15
+                25
         ));
 
         int libraryBookPickup = serviceApi.create(new Service(
@@ -75,8 +82,15 @@ public class DatabaseInitializer implements CommandLineRunner {
                 0,
                 "Registration",
                 libraryId,
-                "Register an account in the libraryy",
+                "Register an account in the library",
                 20
+        ));
+        int mcDonaldsOrder = serviceApi.create(new Service(
+                0,
+                "Order",
+                mcDonaldsId,
+                "Make an order",
+                30
         ));
 
         reservationApi.create(new Reservation(
@@ -87,7 +101,6 @@ public class DatabaseInitializer implements CommandLineRunner {
                 "+1-800-273-8255",
                 "blackadder@gmail.com"
         ));
-
         reservationApi.create(new Reservation(
                 0,
                 libraryId,
@@ -96,7 +109,6 @@ public class DatabaseInitializer implements CommandLineRunner {
                 "951-262-3062",
                 "santa@claus.com"
         ));
-
         reservationApi.create(new Reservation(
                 0,
                 libraryId,
@@ -104,6 +116,14 @@ public class DatabaseInitializer implements CommandLineRunner {
                 "Baldrick",
                 "626-792-8247",
                 "baldrick@yahoo.com"
+        ));
+        reservationApi.create(new Reservation(
+                0,
+                mcDonaldsId,
+                List.of(new ServiceReservation(mcDonaldsOrder, new Date(124, Calendar.FEBRUARY, 24, 12, 0))),
+                "Test User",
+                "123-456-7890",
+                "testUser@test.com"
         ));
     }
 }

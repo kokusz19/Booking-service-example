@@ -6,7 +6,7 @@ import com.kokusz19.udinfopark.model.dto.Company;
 import com.kokusz19.udinfopark.model.dto.Reservation;
 import com.kokusz19.udinfopark.model.dto.ServiceReservation;
 import com.kokusz19.udinfopark.model.dto.Time;
-import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -50,8 +50,7 @@ public class ModelConverter {
 
     public com.kokusz19.udinfopark.model.dao.Reservation convert(Reservation reservation) {
         List<Service> services = serviceService.findByIds(reservation.getServiceReservations().stream().map(ServiceReservation::getServiceId).toList());
-        List<Integer> missingServiceIds = ListUtils.subtract(reservation.getServiceReservations().stream().map(ServiceReservation::getServiceId).toList(), services.stream().map(Service::getServiceId).toList());
-        Preconditions.checkArgument(missingServiceIds.isEmpty(), String.format("There are missing service ids in the request [ids=%s]", String.join(", ", missingServiceIds.stream().map(String::valueOf).toList())));
+        Preconditions.checkArgument(CollectionUtils.containsAll(reservation.getServiceReservations().stream().map(ServiceReservation::getServiceId).toList(), services.stream().map(Service::getServiceId).toList()), "There are missing service ids in the request");
 
         Company company = companyService.getOne(reservation.getCompanyId());
         Preconditions.checkNotNull(company, String.format("Company could not be found with [id=%s]", reservation.getCompanyId()));

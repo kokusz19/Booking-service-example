@@ -34,6 +34,10 @@ public class ServiceService implements ServiceApi {
         return serviceRepository.findById(id).map(modelConverter::convert).orElse(null);
     }
 
+    public List<com.kokusz19.udinfopark.model.dto.Service> getByCompanyId(int companyId) {
+        return serviceRepository.findByCompanyId(companyId).stream().map(modelConverter::convert).toList();
+    }
+
     @Override
     public int create(com.kokusz19.udinfopark.model.dto.Service subject) {
         Optional<com.kokusz19.udinfopark.model.dao.Service> byName = serviceRepository.findByName(subject.getName());
