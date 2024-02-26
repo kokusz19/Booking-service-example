@@ -11,9 +11,9 @@ import java.util.Optional;
 
 @Repository
 public interface ServiceReservationRepository extends JpaRepository<ServiceReservation, Integer> {
-    @Query("SELECT sr FROM ServiceReservation sr WHERE sr.service.serviceId = :serviceId AND sr.reservationStart BETWEEN :fromDate AND :toDate")
-    Optional<ServiceReservation> findByServiceIdAndDate(
-            @Param("serviceId") int serviceId,
+    @Query("SELECT sr FROM ServiceReservation sr WHERE sr.service.company.companyId = :companyId AND sr.reservationStart BETWEEN :fromDate AND :toDate")
+    Optional<ServiceReservation> findByCompanyIdAndDate(
+            @Param("companyId") int serviceId,
             @Param("fromDate") Date fromTime,
             @Param("toDate") Date toDate);
 }

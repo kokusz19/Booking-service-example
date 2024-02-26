@@ -2,6 +2,7 @@ package com.kokusz19.udinfopark.service;
 
 import com.google.common.base.Preconditions;
 import com.kokusz19.udinfopark.api.ReservationApi;
+import com.kokusz19.udinfopark.model.dto.Company;
 import com.kokusz19.udinfopark.model.dto.Reservation;
 import com.kokusz19.udinfopark.model.dto.ReservationSearchParams;
 import com.kokusz19.udinfopark.model.dto.ServiceReservation;
@@ -20,12 +21,14 @@ public class ReservationService implements ReservationApi {
     private static final int MINIMUM_MINUTE_DIFFERENCE_BETWEEN_MULTIPLE_SERVICE_RESERVATIONS = 5;
     private final ReservationRepository reservationRepository;
     private final ServiceService serviceService;
+    private final CompanyService companyService;
     private final ModelConverter modelConverter;
     private final ServiceReservationService serviceReservationService;
 
-    public ReservationService(ReservationRepository reservationRepository, ServiceService serviceService, ModelConverter modelConverter, ServiceReservationService serviceReservationService) {
+    public ReservationService(ReservationRepository reservationRepository, ServiceService serviceService, CompanyService companyService, ModelConverter modelConverter, ServiceReservationService serviceReservationService) {
         this.reservationRepository = reservationRepository;
         this.serviceService = serviceService;
+        this.companyService = companyService;
         this.modelConverter = modelConverter;
         this.serviceReservationService = serviceReservationService;
     }
@@ -55,6 +58,9 @@ public class ReservationService implements ReservationApi {
 
 
     private void validateServiceReservations(Reservation subject) {
+        Company company = companyService.getOne(subject.getCompanyId());
+        Preconditions.checkNotNull(company, String.format("Company not found [id=%d]", subject.getCompanyId()));
+
         List<com.kokusz19.udinfopark.model.dto.Service> companyServices = serviceService.getByCompanyId(subject.getCompanyId());
         Preconditions.checkArgument(!companyServices.isEmpty(), "There are no services under this company!");
 
@@ -64,7 +70,7 @@ public class ReservationService implements ReservationApi {
                 .map(serviceReservation -> {
                     com.kokusz19.udinfopark.model.dto.Service service = serviceService.getOne(serviceReservation.getServiceId());
                     services.put(service.getServiceId(), service);
-                    return serviceReservationService.findByServiceIdAndDate(serviceReservation, service);
+                    return serviceReservationService.findByServiceIdAndDate(service, serviceReservation);
                 })
                 .map(Optional::isEmpty)
                 .reduce(Boolean::logicalAnd)
@@ -87,6 +93,20 @@ public class ReservationService implements ReservationApi {
                     serviceReservationBStart.getTime() >= DateUtils.addMinutes(serviceReservationAEnd, minMinuteDiff).getTime(),
                     String.format("There should be at least %d minutes of difference between service reservations [reservationA=%s] [reservationB=%s]", minMinuteDiff, serviceReservations.get(i).getReservationStart().toInstant().toString(), serviceReservations.get(i+1).getReservationStart().toInstant().toString()));
         }
+
+        ServiceReservation lastReservation = serviceReservations.get(serviceReservations.size()-1);
+        Date lastReservationEnd = DateUtils.addMinutes(lastReservation.getReservationStart(), services.get(lastReservation.getServiceId()).getDurationMinutes());
+        Preconditions.checkArgument(lastReservation.getReservationStart().getDay() == lastReservationEnd.getDay(), "Reservation can't overflow to next day!");
+
+        Date companyOpenTime = new Date(serviceReservations.get(0).getReservationStart().getTime());
+        companyOpenTime.setHours(company.getOpenAt().getHour());
+        companyOpenTime.setMinutes(company.getOpenAt().getMinute());
+        Preconditions.checkArgument(companyOpenTime.getTime() <= serviceReservations.get(0).getReservationStart().getTime(), "Reservation can't underflow the open time!");
+
+        Date companyCloseTime = new Date(lastReservationEnd.getTime());
+        companyCloseTime.setHours(company.getCloseAt().getHour());
+        companyCloseTime.setMinutes(company.getCloseAt().getMinute());
+        Preconditions.checkArgument(companyCloseTime.getTime() >= lastReservationEnd.getTime(), "Reservation can't overflow the close time!");
     }
 
     @Override

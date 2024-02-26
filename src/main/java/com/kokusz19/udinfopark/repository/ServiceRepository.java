@@ -11,7 +11,11 @@ import java.util.Optional;
 
 @Repository
 public interface ServiceRepository extends JpaRepository<Service, Integer> {
-    Optional<Service> findByName(String name);
+
+    @Query("SELECT service FROM Service service WHERE service.company.companyId = :companyId AND service.name = :serviceName")
+    Optional<Service> findByCompanyIdAndServiceName(
+            @Param("companyId") int companyId,
+            @Param("serviceName") String serviceName);
 
     @Query("SELECT service FROM Service service WHERE service.serviceId in :ids")
     List<Service> findByIds(

@@ -21,8 +21,8 @@ public class ServiceReservationService implements ServiceReservationApi {
         this.modelConverter = modelConverter;
     }
 
-    Optional<com.kokusz19.udinfopark.model.dto.ServiceReservation> findByServiceIdAndDate(ServiceReservation serviceReservation, com.kokusz19.udinfopark.model.dto.Service service) {
-        return serviceReservationRepository.findByServiceIdAndDate(serviceReservation.getServiceId(), DateUtils.addMinutes(serviceReservation.getReservationStart(), -service.getDurationMinutes()), DateUtils.addMinutes(serviceReservation.getReservationStart(), service.getDurationMinutes()))
+    Optional<com.kokusz19.udinfopark.model.dto.ServiceReservation> findByServiceIdAndDate(com.kokusz19.udinfopark.model.dto.Service service, ServiceReservation serviceReservation) {
+        return serviceReservationRepository.findByCompanyIdAndDate(service.getCompanyId(), DateUtils.addMinutes(serviceReservation.getReservationStart(), -service.getDurationMinutes()), DateUtils.addMinutes(serviceReservation.getReservationStart(), service.getDurationMinutes()))
                 .map(modelConverter::convert);
     }
 

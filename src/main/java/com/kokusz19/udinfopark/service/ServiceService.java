@@ -40,8 +40,8 @@ public class ServiceService implements ServiceApi {
 
     @Override
     public int create(com.kokusz19.udinfopark.model.dto.Service subject) {
-        Optional<com.kokusz19.udinfopark.model.dao.Service> byName = serviceRepository.findByName(subject.getName());
-        Preconditions.checkArgument(byName.isEmpty(), "Service already exists!");
+        Optional<com.kokusz19.udinfopark.model.dao.Service> byName = serviceRepository.findByCompanyIdAndServiceName(subject.getCompanyId(), subject.getName());
+        Preconditions.checkArgument(byName.isEmpty(), "Service already exists under the company!");
         return serviceRepository.save(modelConverter.convert(subject)).getServiceId();
     }
 

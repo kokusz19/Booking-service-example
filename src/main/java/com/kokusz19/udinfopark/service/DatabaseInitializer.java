@@ -85,12 +85,26 @@ public class DatabaseInitializer implements CommandLineRunner {
                 "Register an account in the library",
                 20
         ));
+        int libraryInterview = serviceApi.create(new Service(
+                0,
+                "Interview",
+                libraryId,
+                "Do an interview",
+                90
+        ));
         int mcDonaldsOrder = serviceApi.create(new Service(
                 0,
                 "Order",
                 mcDonaldsId,
                 "Make an order",
                 30
+        ));
+        int mcDonaldsInterview = serviceApi.create(new Service(
+                0,
+                "Interview",
+                mcDonaldsId,
+                "Do an interview",
+                90
         ));
 
         reservationApi.create(new Reservation(

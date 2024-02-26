@@ -17,7 +17,7 @@ public class Service {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int serviceId;
     @NotNull
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name", nullable = false)
     private String name;
     @NotNull @Valid
     @ManyToOne(fetch = FetchType.EAGER, optional = false)

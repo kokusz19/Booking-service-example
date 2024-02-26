@@ -46,7 +46,7 @@ class ServiceServiceTest extends TestBase {
 		when: "not present - can create"
 			def result = service.create(serviceDto)
 		then:
-			1 * service.serviceRepository.findByName(serviceDto.getName()) >> Optional.empty()
+			1 * service.serviceRepository.findByCompanyIdAndServiceName(serviceDto.getCompanyId(), serviceDto.getName()) >> Optional.empty()
 			1 * service.modelConverter.convert(serviceDto) >> serviceDao
 			1 * service.serviceRepository.save(serviceDao) >> {
 				serviceDao.setServiceId(newServiceId)
@@ -59,11 +59,11 @@ class ServiceServiceTest extends TestBase {
 		when: "present - can't create service with the same name"
 			service.create(serviceDto)
 		then:
-			1 * service.serviceRepository.findByName(serviceDto.getName()) >> Optional.of(serviceDao)
+			1 * service.serviceRepository.findByCompanyIdAndServiceName(serviceDto.getCompanyId(), serviceDto.getName()) >> Optional.of(serviceDao)
 			0 * _
 		and:
 			def ex = thrown(IllegalArgumentException)
-			assert ex.message == "Service already exists!"
+			assert ex.message == "Service already exists under the company!"
 	}
 
 	def "update"() {
