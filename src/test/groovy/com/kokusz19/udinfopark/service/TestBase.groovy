@@ -1,9 +1,6 @@
 package com.kokusz19.udinfopark.service
 
-import com.kokusz19.udinfopark.model.dao.Company
-import com.kokusz19.udinfopark.model.dao.Reservation
-import com.kokusz19.udinfopark.model.dao.Service
-import com.kokusz19.udinfopark.model.dao.Time
+import com.kokusz19.udinfopark.model.dao.*
 import spock.lang.Specification
 
 class TestBase extends Specification {
@@ -39,10 +36,21 @@ class TestBase extends Specification {
 			"description",
 			300)
 
+	def serviceReservationDto = new com.kokusz19.udinfopark.model.dto.ServiceReservation(
+			1,
+			1,
+			new Date(124, 2, 24, 12, 0)
+	)
+	def serviceReservationDao = new ServiceReservation(
+			1,
+			serviceDao,
+			new Date(124, 2, 24, 12, 0)
+	)
+
 	def reservationDto = new com.kokusz19.udinfopark.model.dto.Reservation(
 			1,
 			1,
-			[1],
+			[serviceReservationDto],
 			"FirstName LastName",
 			"PhoneNumber",
 			"EmailAddress"
@@ -50,7 +58,7 @@ class TestBase extends Specification {
 	def reservationDao = new Reservation(
 			1,
 			companyDao,
-			[serviceDao],
+			[serviceReservationDao],
 			"FirstName LastName",
 			"PhoneNumber",
 			"EmailAddress"

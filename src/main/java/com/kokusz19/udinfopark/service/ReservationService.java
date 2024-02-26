@@ -14,11 +14,15 @@ import java.util.Optional;
 public class ReservationService implements ReservationApi {
 
     private final ReservationRepository reservationRepository;
+    private final ServiceService serviceService;
     private final ModelConverter modelConverter;
+    private final ServiceReservationService serviceReservationService;
 
-    public ReservationService(ReservationRepository reservationRepository, ModelConverter modelConverter) {
+    public ReservationService(ReservationRepository reservationRepository, ServiceService serviceService, ModelConverter modelConverter, ServiceReservationService serviceReservationService) {
         this.reservationRepository = reservationRepository;
+        this.serviceService = serviceService;
         this.modelConverter = modelConverter;
+        this.serviceReservationService = serviceReservationService;
     }
 
     @Override
@@ -33,9 +37,24 @@ public class ReservationService implements ReservationApi {
 
     @Override
     public int create(Reservation subject) {
-        // TODO: Fix after added reservation times
-        Optional<com.kokusz19.udinfopark.model.dao.Reservation> reservation = reservationRepository.findById(subject.getReservationId());
-        Preconditions.checkArgument(reservation.isEmpty(), "Reservation already exists!");
+        boolean validReservation = subject.getServiceReservations().stream()
+                .map(serviceReservation -> {
+                    com.kokusz19.udinfopark.model.dto.Service service = serviceService.getOne(serviceReservation.getServiceId());
+                    return serviceReservationService.findByServiceIdAndDate(serviceReservation, service);
+                })
+                .map(Optional::isEmpty)
+                .reduce(Boolean::logicalAnd)
+                .orElse(true);
+
+        // TODO: more detailed message
+        Preconditions.checkState(validReservation, "Could not make the reservation, because one or more timewindows have already been booked or are overlapping with others.");
+
+        List<com.kokusz19.udinfopark.model.dto.ServiceReservation> list = subject.getServiceReservations().stream()
+                .map(modelConverter::convert)
+                .map(serviceReservationService::save)
+                .map(modelConverter::convert).toList();
+        subject.setServiceReservations(list);
+
         return reservationRepository.save(modelConverter.convert(subject)).getReservationId();
     }
 

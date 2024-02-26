@@ -23,14 +23,14 @@ public class Reservation {
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "company_id", nullable = false)
     private Company company;
-    @NotEmpty @Valid
-    @ManyToMany
+
+    @OneToMany
     @JoinTable(
-            name = "reservation_services",
+            name = "reservation_service_reservation",
             joinColumns = @JoinColumn(name = "reservation_id"),
-            inverseJoinColumns = @JoinColumn(name = "service_id")
+            inverseJoinColumns = @JoinColumn(name = "service_reservation_id")
     )
-    private List<Service> services;
+    private List<ServiceReservation> serviceReservations;
 
     @NotEmpty
     @Column(name = "reservor_name")

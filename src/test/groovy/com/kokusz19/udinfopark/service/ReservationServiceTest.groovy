@@ -11,7 +11,10 @@ class ReservationServiceTest extends TestBase {
 	@Subject
 	def service = new ReservationService(
 			Mock(ReservationRepository),
-			Mock(ModelConverter))
+			Mock(ServiceService),
+			Mock(ModelConverter),
+			Mock(ServiceReservationService)
+	)
 
 	def "getAll"() {
 		when:
@@ -46,10 +49,17 @@ class ReservationServiceTest extends TestBase {
 	def "create"() {
 		setup:
 			def newReservationId = 50
-		when: "not present - can create"
+		when: "can create"
 			def result = service.create(reservationDto)
 		then:
-			1 * service.reservationRepository.findById(reservationDto.getReservationId()) >> Optional.empty()
+			1 * service.serviceService.getOne(1) >> serviceDto
+			1 * service.serviceReservationService.findByServiceIdAndDate(serviceReservationDto, serviceDto) >> Optional.empty()
+			1 * service.modelConverter.convert(reservationDto.serviceReservations[0]) >> serviceReservationDao
+			1 * service.serviceReservationService.save(serviceReservationDao) >> serviceReservationDao
+			1 * service.modelConverter.convert(serviceReservationDao) >> {
+				reservationDto.serviceReservations = [serviceReservationDto]
+				return serviceReservationDto
+			}
 			1 * service.modelConverter.convert(reservationDto) >> reservationDao
 			1 * service.reservationRepository.save(reservationDao) >> {
 				reservationDao.setReservationId(newReservationId)
@@ -59,14 +69,15 @@ class ReservationServiceTest extends TestBase {
 		and:
 			assert result == newReservationId
 
-		when: "present - can't create reservation with the same name"
+		when: "not present - can create"
 			service.create(reservationDto)
 		then:
-			1 * service.reservationRepository.findById(reservationDto.getReservationId()) >> Optional.of(reservationDao)
+			1 * service.serviceService.getOne(1) >> serviceDto
+			1 * service.serviceReservationService.findByServiceIdAndDate(serviceReservationDto, serviceDto) >> Optional.of(serviceReservationDto)
 			0 * _
 		and:
-			def ex = thrown(IllegalArgumentException)
-			assert ex.message == "Reservation already exists!"
+			def ex = thrown(IllegalStateException)
+			assert ex.message == "Could not make the reservation, because one or more timewindows have already been booked or are overlapping with others."
 	}
 
 	def "update"() {
@@ -108,6 +119,7 @@ class ReservationServiceTest extends TestBase {
 			def noSearchParams2 = new ReservationSearchParams()
 			def invalidSearchParams = new ReservationSearchParams(LocalDate.of(1,1,1), new Date(), new Date())
 
+		// TODOs
 		when: "valid searchParams 1"
 			def result = service.search(validSearchParams1)
 		then:

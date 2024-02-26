@@ -1,6 +1,7 @@
 package com.kokusz19.udinfopark.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,8 +18,8 @@ public class Reservation {
     private int reservationId;
     @Min(1)
     private int companyId;
-    @NotEmpty @Size(min = 1)
-    private List<Integer> serviceIds;
+    @NotEmpty @Size(min = 1) @Valid
+    private List<ServiceReservation> serviceReservations;
 
     @NotEmpty @Size(min = 3)
     private String reservorName;

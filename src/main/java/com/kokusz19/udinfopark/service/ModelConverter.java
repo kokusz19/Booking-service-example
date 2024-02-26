@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.kokusz19.udinfopark.model.dao.Service;
 import com.kokusz19.udinfopark.model.dto.Company;
 import com.kokusz19.udinfopark.model.dto.Reservation;
+import com.kokusz19.udinfopark.model.dto.ServiceReservation;
 import com.kokusz19.udinfopark.model.dto.Time;
 import org.apache.commons.collections4.ListUtils;
 import org.springframework.context.annotation.Lazy;
@@ -41,24 +42,27 @@ public class ModelConverter {
     public Reservation convert(com.kokusz19.udinfopark.model.dao.Reservation reservation) {
         return new Reservation(reservation.getReservationId(),
                 reservation.getCompany().getCompanyId(),
-                reservation.getServices().stream().map(com.kokusz19.udinfopark.model.dao.Service::getServiceId).toList(),
+                reservation.getServiceReservations().stream().map(this::convert).toList(),
                 reservation.getReservorName(),
                 reservation.getReservorPhoneNumber(),
                 reservation.getReservorEmail());
     }
 
     public com.kokusz19.udinfopark.model.dao.Reservation convert(Reservation reservation) {
-        List<Service> byIdList = serviceService.findByIds(reservation.getServiceIds());
-        List<Integer> missingServiceIds = ListUtils.subtract(reservation.getServiceIds(), byIdList.stream().map(Service::getServiceId).toList());
+        List<Service> services = serviceService.findByIds(reservation.getServiceReservations().stream().map(ServiceReservation::getServiceId).toList());
+        List<Integer> missingServiceIds = ListUtils.subtract(reservation.getServiceReservations().stream().map(ServiceReservation::getServiceId).toList(), services.stream().map(Service::getServiceId).toList());
         Preconditions.checkArgument(missingServiceIds.isEmpty(), String.format("There are missing service ids in the request [ids=%s]", String.join(", ", missingServiceIds.stream().map(String::valueOf).toList())));
 
         Company company = companyService.getOne(reservation.getCompanyId());
-        Preconditions.checkArgument(company != null, String.format("Company could not be found with [id=%s]", reservation.getCompanyId()));
+        Preconditions.checkNotNull(company, String.format("Company could not be found with [id=%s]", reservation.getCompanyId()));
         com.kokusz19.udinfopark.model.dao.Company companyDao = convert(company);
+
+        List<com.kokusz19.udinfopark.model.dao.ServiceReservation> serviceReservations = reservation.getServiceReservations().stream().map(this::convert).toList();
+        Preconditions.checkArgument(reservation.getServiceReservations().size() == serviceReservations.size(), "Some service reservations could not be converted!");
 
         return new com.kokusz19.udinfopark.model.dao.Reservation(reservation.getReservationId(),
                 companyDao,
-                byIdList,
+                serviceReservations,
                 reservation.getReservorName(),
                 reservation.getReservorPhoneNumber(),
                 reservation.getReservorEmail());
@@ -74,7 +78,7 @@ public class ModelConverter {
 
     public com.kokusz19.udinfopark.model.dao.Service convert(com.kokusz19.udinfopark.model.dto.Service service) {
         Company companyDto = companyService.getOne(service.getCompanyId());
-        Preconditions.checkArgument(companyDto != null, String.format("Company not found with [id=%d]", service.getCompanyId()));
+        Preconditions.checkNotNull(companyDto, String.format("Company not found with [id=%d]", service.getCompanyId()));
 
         com.kokusz19.udinfopark.model.dao.Company company = convert(companyDto);
 
@@ -83,6 +87,25 @@ public class ModelConverter {
                 company,
                 service.getDescription(),
                 service.getDurationMinutes());
+    }
+
+    public ServiceReservation convert(com.kokusz19.udinfopark.model.dao.ServiceReservation serviceReservation) {
+        return new ServiceReservation(
+                serviceReservation.getServiceReservationId(),
+                serviceReservation.getService().getServiceId(),
+                serviceReservation.getReservationStart()
+        );
+    }
+
+    public com.kokusz19.udinfopark.model.dao.ServiceReservation convert(ServiceReservation serviceReservation) {
+        com.kokusz19.udinfopark.model.dao.Service service = convert(serviceService.getOne(serviceReservation.getServiceId()));
+        Preconditions.checkNotNull(service, String.format("Service could not be found [serviceId=%d]!", serviceReservation.getServiceId()));
+
+        return new com.kokusz19.udinfopark.model.dao.ServiceReservation(
+                serviceReservation.getServiceReservationId(),
+                service,
+                serviceReservation.getReservationStart()
+        );
     }
 
     public Time convert(com.kokusz19.udinfopark.model.dao.Time time) {

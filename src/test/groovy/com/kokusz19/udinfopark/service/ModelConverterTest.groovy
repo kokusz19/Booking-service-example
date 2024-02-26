@@ -38,8 +38,10 @@ class ModelConverterTest extends TestBase {
 		when: "dto -> dao"
 			result = modelConverter.convert(reservationDto)
 		then:
-			1 * modelConverter.serviceService.findByIds(reservationDto.serviceIds) >> [serviceDao]
-			1 * modelConverter.companyService.getOne(reservationDto.companyId) >> companyDto
+			// TODO: CACHE - company, service
+			1 * modelConverter.serviceService.findByIds([1]) >> [serviceDao]
+			2 * modelConverter.companyService.getOne(reservationDto.companyId) >> companyDto
+			1 * modelConverter.serviceService.getOne(1) >> serviceDto
 			0 * _
 		and:
 			assert result == reservationDao
@@ -47,7 +49,7 @@ class ModelConverterTest extends TestBase {
 		when: "dto -> dao - missing serviceIds"
 			modelConverter.convert(reservationDto)
 		then:
-			1 * modelConverter.serviceService.findByIds(reservationDto.serviceIds) >> []
+			1 * modelConverter.serviceService.findByIds([1]) >> []
 			0 * _
 		and:
 			def ex = thrown(IllegalArgumentException)
@@ -56,11 +58,11 @@ class ModelConverterTest extends TestBase {
 		when: "dto -> dao - missing company"
 			modelConverter.convert(reservationDto)
 		then:
-			1 * modelConverter.serviceService.findByIds(reservationDto.serviceIds) >> [serviceDao]
+			1 * modelConverter.serviceService.findByIds([1]) >> [serviceDao]
 			1 * modelConverter.companyService.getOne(reservationDto.companyId) >> null
 			0 * _
 		and:
-			ex = thrown(IllegalArgumentException)
+			ex = thrown(NullPointerException)
 			assert ex.message == "Company could not be found with [id=1]"
 	}
 
@@ -86,7 +88,7 @@ class ModelConverterTest extends TestBase {
 			1 * modelConverter.companyService.getOne(serviceDto.companyId) >> null
 			0 * _
 		and:
-			def ex = thrown(IllegalArgumentException)
+			def ex = thrown(NullPointerException)
 			assert ex.message == "Company not found with [id=1]"
 	}
 

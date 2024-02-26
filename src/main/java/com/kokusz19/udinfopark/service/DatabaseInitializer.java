@@ -3,13 +3,12 @@ package com.kokusz19.udinfopark.service;
 import com.kokusz19.udinfopark.api.CompanyApi;
 import com.kokusz19.udinfopark.api.ReservationApi;
 import com.kokusz19.udinfopark.api.ServiceApi;
-import com.kokusz19.udinfopark.model.dto.Company;
-import com.kokusz19.udinfopark.model.dto.Reservation;
-import com.kokusz19.udinfopark.model.dto.Service;
-import com.kokusz19.udinfopark.model.dto.Time;
+import com.kokusz19.udinfopark.model.dto.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -83,7 +82,7 @@ public class DatabaseInitializer implements CommandLineRunner {
         reservationApi.create(new Reservation(
                 0,
                 hospitalId,
-                List.of(hospitalEmergencyServices),
+                List.of(new ServiceReservation(hospitalEmergencyServices, new Date(124, Calendar.FEBRUARY, 24, 0, 0))),
                 "Sir Edmund Blackadder",
                 "+1-800-273-8255",
                 "blackadder@gmail.com"
@@ -92,7 +91,7 @@ public class DatabaseInitializer implements CommandLineRunner {
         reservationApi.create(new Reservation(
                 0,
                 libraryId,
-                List.of(libraryRegistration, libraryBookPickup),
+                List.of(new ServiceReservation(libraryRegistration, new Date(124, Calendar.FEBRUARY, 24, 16, 30)), new ServiceReservation(libraryBookPickup, new Date(124, Calendar.FEBRUARY, 24, 17, 30))),
                 "Santa Claus",
                 "951-262-3062",
                 "santa@claus.com"
@@ -101,7 +100,7 @@ public class DatabaseInitializer implements CommandLineRunner {
         reservationApi.create(new Reservation(
                 0,
                 libraryId,
-                List.of(libraryBookPickup, libraryBookDropOff),
+                List.of(new ServiceReservation(libraryBookPickup, new Date(124, Calendar.FEBRUARY, 24, 18, 0)), new ServiceReservation(libraryBookDropOff, new Date(124, Calendar.FEBRUARY, 24, 18, 30))),
                 "Baldrick",
                 "626-792-8247",
                 "baldrick@yahoo.com"

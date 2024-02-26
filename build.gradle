@@ -30,6 +30,7 @@ dependencies {
 	implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
 	implementation 'com.google.guava:guava:33.0.0-jre'
 	implementation 'org.apache.commons:commons-collections4:4.4'
+	implementation 'org.apache.commons:commons-lang3:3.14.0'
 	// To load .env on application startup
 	implementation 'io.github.cdimascio:java-dotenv:5.2.2'
 
