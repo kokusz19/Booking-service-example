@@ -25,6 +25,24 @@ services:
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
     networks:
       - local-network
+  ud-infopark-keycloak:
+    image: quay.io/keycloak/keycloak:20.0
+    container_name: ud-infopark-keycloak
+    depends_on:
+      - ud-infopark-database
+    ports:
+      - "9090:8080"
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_USER}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_PASSWORD}
+      KC_DB: mysql
+      KC_DB_URL: ${DB_URL_DOCKER}
+      KC_DB_USERNAME: ${DB_USERNAME}
+      KC_DB_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - local-network
+    command:
+      - start-dev
 networks:
   local-network:
     driver: bridge
