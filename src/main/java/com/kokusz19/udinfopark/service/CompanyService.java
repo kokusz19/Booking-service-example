@@ -14,10 +14,12 @@ import java.util.Optional;
 public class CompanyService implements CompanyApi {
 
     private final CompanyRepository companyRepository;
+    private final ServiceService serviceService;
     private final ModelConverter modelConverter;
 
-    public CompanyService(CompanyRepository companyRepository, ModelConverter modelConverter) {
+    public CompanyService(CompanyRepository companyRepository, ServiceService serviceService, ModelConverter modelConverter) {
         this.companyRepository = companyRepository;
+        this.serviceService = serviceService;
         this.modelConverter = modelConverter;
     }
 
@@ -46,6 +48,8 @@ public class CompanyService implements CompanyApi {
 
     @Override
     public boolean delete(int id) {
+        Preconditions.checkArgument(serviceService.getByCompanyId(id).isEmpty(), "Can't delete company, as it has services registered to it!");
+
         return companyRepository.findById(id).map(company -> {
             companyRepository.delete(company);
             return true;

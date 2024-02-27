@@ -31,6 +31,10 @@ public class ServiceReservationService implements ServiceReservationApi {
         return serviceReservationRepository.findAll().stream().map(modelConverter::convert).toList();
     }
 
+    public List<ServiceReservation> getByServiceId(int serviceId) {
+        return serviceReservationRepository.findByServiceId(serviceId).stream().map(modelConverter::convert).toList();
+    }
+
     @Override
     public ServiceReservation getOne(int id) {
         return serviceReservationRepository.findById(id).map(modelConverter::convert).orElse(null);

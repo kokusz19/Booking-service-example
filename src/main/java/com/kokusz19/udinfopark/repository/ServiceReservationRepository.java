@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -16,4 +17,9 @@ public interface ServiceReservationRepository extends JpaRepository<ServiceReser
             @Param("companyId") int serviceId,
             @Param("fromDate") Date fromTime,
             @Param("toDate") Date toDate);
+
+    @Query("SELECT sr FROM ServiceReservation sr WHERE sr.service.serviceId = :serviceId")
+    List<ServiceReservation> findByServiceId(
+            @Param("serviceId") int serviceId
+    );
 }

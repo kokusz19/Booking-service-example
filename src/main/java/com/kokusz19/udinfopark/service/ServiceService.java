@@ -13,10 +13,12 @@ import java.util.Optional;
 public class ServiceService implements ServiceApi {
 
     private final ServiceRepository serviceRepository;
+    private final ServiceReservationService serviceReservationService;
     private final ModelConverter modelConverter;
 
-    public ServiceService(ServiceRepository serviceRepository, ModelConverter modelConverter) {
+    public ServiceService(ServiceRepository serviceRepository, ServiceReservationService serviceReservationService, ModelConverter modelConverter) {
         this.serviceRepository = serviceRepository;
+        this.serviceReservationService = serviceReservationService;
         this.modelConverter = modelConverter;
     }
 
@@ -53,6 +55,8 @@ public class ServiceService implements ServiceApi {
 
     @Override
     public boolean delete(int id) {
+        Preconditions.checkArgument(serviceReservationService.getByServiceId(id).isEmpty(), "Can't delete service, as it has reservations registered to it!");
+
         return serviceRepository.findById(id).map(company -> {
             serviceRepository.delete(company);
             return true;

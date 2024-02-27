@@ -1,5 +1,6 @@
 package com.kokusz19.udinfopark.service
 
+import com.kokusz19.udinfopark.model.dto.Service
 import com.kokusz19.udinfopark.repository.CompanyRepository
 import spock.lang.Subject
 
@@ -8,6 +9,7 @@ class CompanyServiceTest extends TestBase {
 	@Subject
 	def service = new CompanyService(
 			Mock(CompanyRepository),
+			Mock(ServiceService),
 			Mock(ModelConverter))
 
 	def "getAll"() {
@@ -82,6 +84,7 @@ class CompanyServiceTest extends TestBase {
 		when: "first run - was in the db before delete - could delete"
 			def result = service.delete(companyDto.getCompanyId())
 		then:
+			1 * service.serviceService.getByCompanyId(companyDto.getCompanyId()) >> []
 			1 * service.companyRepository.findById(companyDto.getCompanyId()) >> Optional.of(companyDao)
 			1 * service.companyRepository.delete(companyDao)
 			0 * _
@@ -91,9 +94,19 @@ class CompanyServiceTest extends TestBase {
 		when: "second run - was not in the db before delete - could not delete"
 			result = service.delete(companyDto.getCompanyId())
 		then:
+			1 * service.serviceService.getByCompanyId(companyDto.getCompanyId()) >> []
 			1 * service.companyRepository.findById(companyDto.getCompanyId()) >> Optional.empty()
 			0 * _
 		and:
 			assert !result
+// TODO: Cache -> Company, Service (refresh, when delete happens)
+		when: "has services assigned to it"
+			service.delete(companyDto.getCompanyId())
+		then:
+			1 * service.serviceService.getByCompanyId(companyDto.getCompanyId()) >> [new Service()]
+			0 * _
+		and:
+			def ex = thrown(IllegalArgumentException)
+			ex.message == "Can't delete company, as it has services registered to it!"
 	}
 }

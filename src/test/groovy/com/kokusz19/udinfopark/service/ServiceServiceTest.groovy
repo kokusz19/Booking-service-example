@@ -1,5 +1,6 @@
 package com.kokusz19.udinfopark.service
 
+
 import com.kokusz19.udinfopark.repository.ServiceRepository
 import spock.lang.Subject
 
@@ -8,6 +9,7 @@ class ServiceServiceTest extends TestBase {
 	@Subject
 	def service = new ServiceService(
 			Mock(ServiceRepository),
+			Mock(ServiceReservationService),
 			Mock(ModelConverter))
 
 	def "getAll"() {
@@ -82,6 +84,7 @@ class ServiceServiceTest extends TestBase {
 		when: "first run - was in the db before delete - could delete"
 			def result = service.delete(serviceDto.getServiceId())
 		then:
+			1 * service.serviceReservationService.getByServiceId(serviceDto.getServiceId()) >> []
 			1 * service.serviceRepository.findById(serviceDto.getServiceId()) >> Optional.of(serviceDao)
 			1 * service.serviceRepository.delete(serviceDao)
 			0 * _
@@ -91,9 +94,20 @@ class ServiceServiceTest extends TestBase {
 		when: "second run - was not in the db before delete - could not delete"
 			result = service.delete(serviceDto.getServiceId())
 		then:
+			1 * service.serviceReservationService.getByServiceId(serviceDto.getServiceId()) >> []
 			1 * service.serviceRepository.findById(serviceDto.getServiceId()) >> Optional.empty()
 			0 * _
 		and:
 			assert !result
+
+		when: "has service reservation assigned to it"
+			service.delete(serviceDto.getServiceId())
+		then:
+			1 * service.serviceReservationService.getByServiceId(serviceDto.getServiceId()) >> [serviceReservationDto]
+			0 * _
+		and:
+			def ex = thrown(IllegalArgumentException)
+			ex.message == "Can't delete service, as it has reservations registered to it!"
+
 	}
 }
