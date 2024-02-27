@@ -35,14 +35,17 @@ services:
     environment:
       KEYCLOAK_ADMIN: ${KEYCLOAK_USER}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_PASSWORD}
+      KEYCLOAK_IMPORT: /opt/keycloak/data/import/users.json
       KC_DB: mysql
       KC_DB_URL: ${DB_URL_DOCKER}
       KC_DB_USERNAME: ${DB_USERNAME}
       KC_DB_PASSWORD: ${DB_PASSWORD}
     networks:
       - local-network
+    volumes:
+      - ./keycloak_users.json:/opt/keycloak/data/import/users.json
     command:
-      - start-dev
+      - 'start-dev --import-realm'
 networks:
   local-network:
     driver: bridge
