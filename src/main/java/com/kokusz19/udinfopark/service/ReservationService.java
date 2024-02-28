@@ -2,10 +2,7 @@ package com.kokusz19.udinfopark.service;
 
 import com.google.common.base.Preconditions;
 import com.kokusz19.udinfopark.api.ReservationApi;
-import com.kokusz19.udinfopark.model.dto.Company;
-import com.kokusz19.udinfopark.model.dto.Reservation;
-import com.kokusz19.udinfopark.model.dto.ReservationSearchParams;
-import com.kokusz19.udinfopark.model.dto.ServiceReservation;
+import com.kokusz19.udinfopark.model.dto.*;
 import com.kokusz19.udinfopark.repository.ReservationRepository;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Service;
@@ -75,7 +72,7 @@ public class ReservationService implements ReservationApi {
                 .map(Optional::isEmpty)
                 .reduce(Boolean::logicalAnd)
                 .orElse(true);
-        // TODO: more detailed message
+
         Preconditions.checkState(noOverlappingReservations, "Could not make the reservation, because one or more timewindows have already been booked or are overlapping with others.");
 
         List<ServiceReservation> serviceReservations = subject.getServiceReservations().stream()
@@ -126,14 +123,72 @@ public class ReservationService implements ReservationApi {
 
 
     @Override
-    public List<Reservation> search(ReservationSearchParams searchParams) {
+    public List<CompanyFreeSpots> search(ReservationSearchParams searchParams) {
         if(searchParams == null || (searchParams.getOnDate() == null && searchParams.getFromDate() == null && searchParams.getToDate() == null)) {
-            return getAll();
+            throw new IllegalArgumentException("Please pass in a search filter");
         }
 
-        // TODO
-        Reservation e1 = new Reservation();
-        e1.setReservationId(123);
-        return List.of(e1);
+        List<Company> companies = companyService.getAll();
+        List<CompanyFreeSpots> companyFreeSpots = new ArrayList<>();
+
+        for (Company company : companies) {
+
+            List<com.kokusz19.udinfopark.model.dto.Service> services = serviceService.getByCompanyId(company.getCompanyId());
+
+            List<ServiceFreeSpots> serviceFreeSpots = new ArrayList<>();
+            for(com.kokusz19.udinfopark.model.dto.Service service : services) {
+
+                Date fromDate = searchParams.getOnDate() != null ? new Date(searchParams.getOnDate().getYear()-1900, searchParams.getOnDate().getMonthValue()-1, searchParams.getOnDate().getDayOfMonth(), 0, 0, 0) : searchParams.getFromDate();
+                Date toDate = searchParams.getOnDate() != null ? new Date(fromDate.getYear(), fromDate.getMonth(), fromDate.getDate(), 23, 59, 59) : searchParams.getToDate();
+                List<ServiceReservation> serviceReservations = serviceReservationService.getByDates(service.getServiceId(), fromDate, toDate);
+
+                List<Date> freeSpot = new ArrayList<>();
+                for (Date currentDate = fromDate; currentDate.before(toDate); currentDate = DateUtils.addMinutes(currentDate,30)) {
+
+                    if(!isCompanyOpen(company.getOpenAt(), company.getCloseAt(), currentDate)) {
+                        continue;
+                    }
+
+                    Date finalCurrentDate = currentDate;
+                    Boolean noCollision = serviceReservations.stream()
+                            .map(serviceReservation ->
+                                    finalCurrentDate.getTime() <= (DateUtils.addMinutes(serviceReservation.getReservationStart(), -service.getDurationMinutes()).getTime()) ||
+                                            finalCurrentDate.getTime() >= DateUtils.addMinutes(serviceReservation.getReservationStart(), service.getDurationMinutes()-1).getTime())
+                            .reduce(Boolean::logicalAnd)
+                            .orElse(true);
+
+                    if(noCollision) {
+                        freeSpot.add(currentDate);
+                    }
+                }
+                serviceFreeSpots.add(new ServiceFreeSpots(service.getServiceId(), freeSpot));
+            }
+            companyFreeSpots.add(new CompanyFreeSpots(company.getCompanyId(), serviceFreeSpots));
+        }
+
+        return companyFreeSpots;
+    }
+
+    private boolean isCompanyOpen(Time openAt, Time closeAt, Date currentDate) {
+        int currentHours = DateUtils.addMinutes(currentDate, currentDate.getTimezoneOffset()).getHours();
+
+        // The opening hour is strictly lower or the closing hour is strictly higher, than the current one
+        if (openAt.getHour() > currentHours || closeAt.getHour() < currentHours) {
+            return false;
+        }
+
+        // The opening hour is strictly higher and the closing hour is strictly lower, than the current one
+        else if (openAt.getHour() < currentHours && closeAt.getHour() > currentHours) {
+            return true;
+        }
+
+        // Opening hour and minute == OPEN
+        // Closing hour and minute == CLOSED
+        else if ((openAt.getHour() == currentHours && openAt.getMinute() > currentDate.getMinutes()) ||
+                (closeAt.getHour() == currentHours && closeAt.getMinute() <= currentDate.getMinutes())) {
+            return false;
+        }
+
+        return true;
     }
 }

@@ -6,6 +6,7 @@ import com.kokusz19.udinfopark.repository.ServiceReservationRepository;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,6 +40,11 @@ public class ServiceReservationService implements ServiceReservationApi {
     public ServiceReservation getOne(int id) {
         return serviceReservationRepository.findById(id).map(modelConverter::convert).orElse(null);
     }
+
+    public List<ServiceReservation> getByDates(int serviceId, Date fromDate, Date toDate){
+        return serviceReservationRepository.findByDates(serviceId, fromDate, toDate).stream().map(modelConverter::convert).toList();
+    }
+
     @Override
     public int create(ServiceReservation subject) {
         //return serviceReservationRepository.save(modelConverter.convert(subject)).getServiceReservationId();

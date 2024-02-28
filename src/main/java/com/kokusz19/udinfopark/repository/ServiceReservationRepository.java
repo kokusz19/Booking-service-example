@@ -18,6 +18,12 @@ public interface ServiceReservationRepository extends JpaRepository<ServiceReser
             @Param("fromDate") Date fromTime,
             @Param("toDate") Date toDate);
 
+    @Query("SELECT sr FROM ServiceReservation sr WHERE sr.service.serviceId = :serviceId AND sr.reservationStart BETWEEN :fromDate AND :toDate")
+    List<ServiceReservation> findByDates(
+            @Param("serviceId") int serviceId,
+            @Param("fromDate") Date fromTime,
+            @Param("toDate") Date toDate);
+
     @Query("SELECT sr FROM ServiceReservation sr WHERE sr.service.serviceId = :serviceId")
     List<ServiceReservation> findByServiceId(
             @Param("serviceId") int serviceId

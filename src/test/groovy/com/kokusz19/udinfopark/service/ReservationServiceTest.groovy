@@ -111,44 +111,27 @@ class ReservationServiceTest extends TestBase {
 
 	def "search"() {
 		setup:
-			def validSearchParams1 = new ReservationSearchParams(null, new Date(), new Date())
-			def validSearchParams2 = new ReservationSearchParams(LocalDate.of(2024, 02, 24), null, null)
 			def noSearchParams1 = null
 			def noSearchParams2 = new ReservationSearchParams()
-			def invalidSearchParams = new ReservationSearchParams(LocalDate.of(1,1,1), new Date(), new Date())
-
-		// TODOs
-		when: "valid searchParams 1"
-			def result = service.search(validSearchParams1)
-		then:
-			0 * _
-		and:
-			println("TODO")
-
-		when: "valid searchParams 2"
-			result = service.search(validSearchParams2)
-		then:
-			0 * _
-		and:
-			println("TODO")
+			// TODO: complete the test cases
+			def validSearchParams1 = new ReservationSearchParams(null, new Date(), new Date())
+			def validSearchParams2 = new ReservationSearchParams(LocalDate.of(2024, 02, 24), null, null)
 
 		when: "no searchParams 1"
-			result = service.search(noSearchParams1)
+			service.search(noSearchParams1)
 		then:
-			1 * service.reservationRepository.findAll() >> [reservationDao]
-			1 * service.modelConverter.convert(reservationDao) >> reservationDto
 			0 * _
 		and:
-			assert result == [reservationDto]
+			def ex = thrown(IllegalArgumentException)
+			assert ex.message == "Please pass in a search filter"
 
 		when: "no searchParams 2"
-			result = service.search(noSearchParams2)
+			service.search(noSearchParams2)
 		then:
-			1 * service.reservationRepository.findAll() >> [reservationDao]
-			1 * service.modelConverter.convert(reservationDao) >> reservationDto
 			0 * _
 		and:
-			assert result == [reservationDto]
+			ex = thrown(IllegalArgumentException)
+			assert ex.message == "Please pass in a search filter"
 	}
 
 	def "validateServiceReservations"() {
@@ -270,5 +253,71 @@ class ReservationServiceTest extends TestBase {
 		and:
 			ex = thrown(IllegalArgumentException)
 			ex.message.contains("Reservation can't overflow the close time!")
+	}
+
+	def "isCompanyOpen"() {
+		setup:
+			def openAt = new Time(8, 30)
+			def closeAt = new Time(20, 30)
+
+		when:
+			def result = service.isCompanyOpen(openAt, closeAt, currentTime)
+		then:
+			0 * _
+		and:
+			assert result == expectation
+
+		// As the new Date()s are in CET
+		where:
+			currentTime                     || expectation
+			new Date(124, 2, 23, 0, 0, 0)   || false
+			new Date(124, 2, 23, 30, 0, 0)  || false
+			new Date(124, 2, 24, 0, 0, 0)   || false
+			new Date(124, 2, 24, 0, 30, 0)  || false
+			new Date(124, 2, 24, 1, 0, 0)   || false
+			new Date(124, 2, 24, 1, 30, 0)  || false
+			new Date(124, 2, 24, 2, 0, 0)   || false
+			new Date(124, 2, 24, 2, 30, 0)  || false
+			new Date(124, 2, 24, 3, 0, 0)   || false
+			new Date(124, 2, 24, 3, 30, 0)  || false
+			new Date(124, 2, 24, 4, 0, 0)   || false
+			new Date(124, 2, 24, 4, 30, 0)  || false
+			new Date(124, 2, 24, 5, 0, 0)   || false
+			new Date(124, 2, 24, 5, 30, 0)  || false
+			new Date(124, 2, 24, 6, 0, 0)   || false
+			new Date(124, 2, 24, 6, 30, 0)  || false
+			new Date(124, 2, 24, 7, 0, 0)   || false
+			new Date(124, 2, 24, 7, 30, 0)  || false
+			new Date(124, 2, 24, 8, 0, 0)   || false
+			new Date(124, 2, 24, 8, 30, 0)  || false
+			new Date(124, 2, 24, 9, 0, 0)   || false
+			new Date(124, 2, 24, 9, 30, 0)  || true
+			new Date(124, 2, 24, 10, 0, 0)  || true
+			new Date(124, 2, 24, 10, 30, 0) || true
+			new Date(124, 2, 24, 11, 0, 0)  || true
+			new Date(124, 2, 24, 11, 30, 0) || true
+			new Date(124, 2, 24, 12, 0, 0)  || true
+			new Date(124, 2, 24, 12, 30, 0) || true
+			new Date(124, 2, 24, 13, 0, 0)  || true
+			new Date(124, 2, 24, 13, 30, 0) || true
+			new Date(124, 2, 24, 14, 0, 0)  || true
+			new Date(124, 2, 24, 14, 30, 0) || true
+			new Date(124, 2, 24, 15, 0, 0)  || true
+			new Date(124, 2, 24, 15, 30, 0) || true
+			new Date(124, 2, 24, 16, 0, 0)  || true
+			new Date(124, 2, 24, 16, 30, 0) || true
+			new Date(124, 2, 24, 17, 0, 0)  || true
+			new Date(124, 2, 24, 17, 30, 0) || true
+			new Date(124, 2, 24, 18, 0, 0)  || true
+			new Date(124, 2, 24, 18, 30, 0) || true
+			new Date(124, 2, 24, 19, 0, 0)  || true
+			new Date(124, 2, 24, 19, 30, 0) || true
+			new Date(124, 2, 24, 20, 0, 0)  || true
+			new Date(124, 2, 24, 20, 30, 0) || true
+			new Date(124, 2, 24, 21, 0, 0)  || true
+			new Date(124, 2, 24, 21, 30, 0) || false
+			new Date(124, 2, 24, 22, 0, 0)  || false
+			new Date(124, 2, 24, 22, 30, 0) || false
+			new Date(124, 2, 24, 23, 0, 0)  || false
 	}
 }

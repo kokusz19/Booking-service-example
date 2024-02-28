@@ -38,7 +38,6 @@ class ModelConverterTest extends TestBase {
 		when: "dto -> dao"
 			result = modelConverter.convert(reservationDto)
 		then:
-			// TODO: CACHE - company, service
 			1 * modelConverter.serviceService.findByIds([1]) >> [serviceDao]
 			2 * modelConverter.companyService.getOne(reservationDto.companyId) >> companyDto
 			1 * modelConverter.serviceService.getOne(1) >> serviceDto

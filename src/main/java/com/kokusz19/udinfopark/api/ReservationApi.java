@@ -1,6 +1,7 @@
 package com.kokusz19.udinfopark.api;
 
 import com.kokusz19.udinfopark.config.validator.ReservationSearchBody;
+import com.kokusz19.udinfopark.model.dto.CompanyFreeSpots;
 import com.kokusz19.udinfopark.model.dto.Reservation;
 import com.kokusz19.udinfopark.model.dto.ReservationSearchParams;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,7 +14,7 @@ import java.util.List;
 public interface ReservationApi extends CrudApi<Reservation> {
 
     @PostMapping("search")
-    List<Reservation> search(
+    List<CompanyFreeSpots> search(
             @RequestBody @ReservationSearchBody ReservationSearchParams searchParams);
 
 }
