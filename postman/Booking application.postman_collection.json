@@ -1,0 +1,596 @@
+{
+	"info": {
+		"_postman_id": "68cbfe8d-d97b-4e03-b87c-86370ee5b0c9",
+		"name": "Booking application",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10213587"
+	},
+	"item": [
+		{
+			"name": "Company",
+			"item": [
+				{
+					"name": "getAllCompanies",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/v1/companies",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"companies"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getCompany",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/v1/companies/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"companies",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createCompany",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"companyId\": 3,\r\n    \"name\": \"test233\",\r\n    \"address\": \"address\",\r\n    \"openAt\": {\r\n        \"hour\": 23,\r\n        \"minute\": 0\r\n    },\r\n    \"closeAt\": {\r\n        \"hour\": 16,\r\n        \"minute\": 30\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/v1/companies",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"companies"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateCompany",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"test2322222\",\r\n    \"address\": \"address\",\r\n    \"openAt\": {\r\n        \"hour\": 23,\r\n        \"minute\": 0\r\n    },\r\n    \"closeAt\": {\r\n        \"hour\": 16,\r\n        \"minute\": 30\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/v1/companies/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"companies",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteCompany",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/v1/companies/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"companies",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Service",
+			"item": [
+				{
+					"name": "getAllServices",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/v1/services",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"services"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getService",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/v1/services/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"services",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createService",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"serviceId\": 3,\r\n    \"name\": \"test233\",\r\n    \"companyId\": 1,\r\n    \"description\": \"asd\",\r\n    \"durationMinutes\": 10\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/v1/services",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"services"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateService",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"test2322222\",\r\n    \"address\": \"address\",\r\n    \"openAt\": {\r\n        \"hour\": 23,\r\n        \"minute\": 0\r\n    },\r\n    \"closeAt\": {\r\n        \"hour\": 16,\r\n        \"minute\": 30\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/v1/services/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"services",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteService",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/v1/services/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"services",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reservation",
+			"item": [
+				{
+					"name": "getAllReservations",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/v1/reservations",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"reservations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getReservation",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/v1/reservations/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"reservations",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "createReservation",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"reservationId\": 3,\r\n    \"companyId\": 1,\r\n    \"serviceIds\": [\r\n        1\r\n    ],\r\n    \"reservorName\": \"name\",\r\n    \"reservorPhoneNumber\": \"phone-number\",\r\n    \"reservorEmail\": \"email\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/v1/reservations",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"reservations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "searchReservation",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"onDate\": \"2024-02-24\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/v1/reservations/search",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"reservations",
+								"search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateReservation",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"reservationId\": 1,\r\n    \"company\": {\r\n        \"companyId\": 1,\r\n        \"name\": \"test233333\",\r\n        \"address\": \"address\",\r\n        \"openAt\": {\r\n            \"hour\": 23,\r\n            \"minute\": 0\r\n        },\r\n        \"closeAt\": {\r\n            \"hour\": 16,\r\n            \"minute\": 30\r\n        }\r\n    },\r\n    \"services\": [\r\n        {\r\n            \"serviceId\": 1,\r\n            \"name\": \"test23333\",\r\n            \"company\": {\r\n                \"companyId\": 1,\r\n                \"name\": \"test233\",\r\n                \"address\": \"address\",\r\n                \"openAt\": {\r\n                    \"hour\": 23,\r\n                    \"minute\": 0\r\n                },\r\n                \"closeAt\": {\r\n                    \"hour\": 16,\r\n                    \"minute\": 30\r\n                }\r\n            },\r\n            \"description\": \"asd\",\r\n            \"durationMinutes\": 10\r\n        }\r\n    ],\r\n    \"reservorName\": \"name\",\r\n    \"reservorPhoneNumber\": \"phone-number\",\r\n    \"reservorEmail\": \"email\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/v1/reservations/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"reservations",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteReservation",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/v1/reservations/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"v1",
+								"reservations",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "KeyCloak",
+			"item": [
+				{
+					"name": "Get user information",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "client_id",
+									"value": "{{ClientId}}",
+									"type": "default"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{ClientSecret}}",
+									"type": "default"
+								},
+								{
+									"key": "grant_type",
+									"value": "{{GrantType}}",
+									"type": "default"
+								},
+								{
+									"key": "username",
+									"value": "{{Username}}",
+									"type": "default"
+								},
+								{
+									"key": "password",
+									"value": "{{Password}}",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:9090/realms/{{TestUserRealm}}/protocol/openid-connect/token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9090",
+							"path": [
+								"realms",
+								"{{TestUserRealm}}",
+								"protocol",
+								"openid-connect",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get well known information",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:9090/realms/{{TestUserRealm}}/.well-known/openid-configuration",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9090",
+							"path": [
+								"realms",
+								"{{TestUserRealm}}",
+								".well-known",
+								"openid-configuration"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Introspect token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "client_id",
+									"value": "{{ClientId}}",
+									"type": "default"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{ClientSecret}}",
+									"type": "default"
+								},
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJIVDl6eU1fUDhETGdRUmdoclZMcENJU2o3R2lac2RjZ2otdGx4Y3lTUXZZIn0.eyJleHAiOjE3MDkxMzc3ODMsImlhdCI6MTcwOTEzNzQ4MywianRpIjoiZWIwYjNhNGEtYTE5Mi00NjEwLTk3ZTAtMWQxZjA0MThlNGM4IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo5MDkwL3JlYWxtcy90ZXN0VXNlclJlYWxtIiwic3ViIjoiZWU4YWU3ZjctMTgxNy00ZWY1LThmN2UtMGRmZjFiNjk2ZDMzIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoibWFpbi1jbGllbnQiLCJzZXNzaW9uX3N0YXRlIjoiZjFjZDJmNDEtMjBmMi00NzJjLWEyOWQtMTRlMDI2Y2RmY2M3IiwiYWNyIjoiMSIsInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJkZWZhdWx0LXJvbGVzLW1hc3RlciIsIlJPTEVfYWRtaW4iLCJhZG1pbiJdfSwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwic2lkIjoiZjFjZDJmNDEtMjBmMi00NzJjLWEyOWQtMTRlMDI2Y2RmY2M3IiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJ0ZXN0dXNlciJ9.eoFzeuSvP6zQ7JEfW63FB1jSgTVYcDkGjr3LymVb5H2CNpaM7Y5dTguhyy-CY5IavNNfjupy5ax247-9O08CvZ_NqUCqMRPyzJqCl7jtVkZLMU_sJA2qR2-LOqTjwaY71lwIHigNQxyueieQal5CQ06NXuvHRU1HmCALTYJaQnzjQ1mHlpakzIzwVC_yaLkBTZo1qGtzU7mj19mQXbjcBMczSqDAqFAqkZSyikNAhO2nygSeUOzJL01mzLytTegipF0UVfnGmVkWCfeKQqAhP4UzTaPm14r1bDmIyJHpx3Erx1N63kb0dGhQ5hUmzzRI6x5t7km48TfZUs8VqPGvKg",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:9090/realms/{{TestUserRealm}}/protocol/openid-connect/token/introspect",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "9090",
+							"path": [
+								"realms",
+								"{{TestUserRealm}}",
+								"protocol",
+								"openid-connect",
+								"token",
+								"introspect"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "getToken",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.environment.set(\"AuthToken\", jsonData.access_token)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"client_id\": \"{{ClientId}}\",\r\n    \"client_secret\": \"{{ClientSecret}}\",\r\n    \"grant_type\": \"{{GrantType}}\",\r\n    \"username\": \"{{Username}}\",\r\n    \"password\": \"{{Password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/v1/token",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v1",
+						"token"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{AuthToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
