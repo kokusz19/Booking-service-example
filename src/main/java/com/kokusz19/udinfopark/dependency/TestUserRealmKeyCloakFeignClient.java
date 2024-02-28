@@ -1,5 +1,6 @@
 package com.kokusz19.udinfopark.dependency;
 
+import com.kokusz19.udinfopark.model.dto.security.JwtTokenIntrospectResponse;
 import com.kokusz19.udinfopark.model.dto.security.JwtTokenResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
@@ -12,6 +13,10 @@ public interface TestUserRealmKeyCloakFeignClient {
 
     @PostMapping(produces = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     JwtTokenResponse generateTokens(
+            @RequestBody MultiValueMap<String, String> jwtTokenRequest);
+
+    @PostMapping(path = "introspect", produces = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    JwtTokenIntrospectResponse introspectToken(
             @RequestBody MultiValueMap<String, String> jwtTokenRequest);
 
 }
