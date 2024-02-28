@@ -3,8 +3,6 @@ server:
     context-path: /v1
   port: 8080
 spring:
-  autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
   datasource:
     url: ${DB_URL_LOCALHOST}
     username: ${DB_USERNAME}
